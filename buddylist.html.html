@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buddy List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        * {
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #bdb6b6;
+        }
+        p {
+            margin-bottom: 0 !important;
+        }
+        .nav-bar {
+            padding: 0 5rem;
+            color: white;
+            background-color: #430d77;
+            display: flex;
+            position: fixed;
+            top: 0;
+            margin-bottom: 100px;
+            width: 100%;
+            justify-content: space-between;
+            padding-top: 1rem;
+        }
+        .logo {
+            font-size: xx-large;
+            font-weight: bold;
+        }
+        .nav-bar button {
+            color: red;
+        }
+        .user-name {
+            font-size: large;
+            font-weight: bold;
+        }
+        .user-image {
+            width: 80px;
+            height: 80px;
+            padding: 3px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+        }
+        .user {
+            background-color: white;
+            border-radius: 10px;
+            margin: 4px;
+            width: 500px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            position: relative;
+        }
+        .user:hover {
+            background-color: lightblue;
+            cursor: pointer;
+        }
+        .user-detail {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .users-container {
+            display: flex;
+            flex-direction: column;
+            width: 60%;
+        }
+        .container-1 {
+            display: flex;
+            margin: 100px;
+            align-items: flex-start;
+            gap: 20px; /* Space between user list and chat box */
+        }
+        .update-container {
+            display: flex;
+            flex-direction: column;
+            width: 40%;
+            padding: 1rem;
+        }
+        .dropdown {
+            position: relative;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        .dropdown-menu.show {
+            display: block;
+        }
+        .dropdown-menu li {
+            list-style: none;
+        }
+        .dropdown-menu .dropdown-item {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #f1f1f1;
+        }
+        .form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: lightgrey;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 5px;
+            width: 100%;
+        }
+        input,
+        select {
+            margin: 1rem;
+            padding: 1rem;
+            width: 100%;
+            border: none;
+            font-size: 1rem;
+            border-radius: 10px;
+        }
+        input:focus {
+            outline: none;
+        }
+        .btn {
+            margin-top: 10px;
+            background-color: #430d77;
+            color: white;
+            font-size: larger;
+            width: 10rem;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            color: whitesmoke;
+        }
+        .hidden {
+            display: none;
+        }
+        .chat-box {
+            display: none;
+            position: relative;
+            width: 4000px; /* Adjusted width */
+            height: 500px; /* Increased size */
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            flex-direction: column;
+        }
+        .chat-header {
+            padding: 10px;
+            background-color: #430d77;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .chat-content {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .chat-footer {
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            background-color: #430d77;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .chat-footer input {
+            flex: 1;
+            margin-right: 10px;
+            padding: 5px;
+        }
+        .attachment-btn {
+            margin-left: 10px;
+            color: grey;
+            cursor: pointer;
+        }
+        .icon-btn {
+            margin-left: 10px;
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .icon-btn:hover {
+            color: #ddd;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 2px;
+            max-width: 50%;
+            word-wrap: break-word;
+        }
+        .message.sender {
+            background-color: #f1f1f1; 
+            margin-left: auto;
+        }
+        .message.receiver {
+            background-color: #e0e0e0; 
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="logo">
+            <p>Buddy List</p>
+        </div>
+        <div class="links">
+            <button onclick="showUserForm()">Add User</button>
+        </div>
+    </nav>
+    <div class="container-1">
+        <div id='root' class="users-container"></div>
+        <div id="chatBox" class="chat-box">
+            <div class="chat-header">
+                <span id="chatUserName">Chat</span>
+                <button onclick="closeChatBox()">X</button>
+            </div>
+            <div id="chatContent" class="chat-content"></div>
+            <div class="chat-footer">
+                <input type="text" id="chatMessageInput" placeholder="Type a message...">
+                <button class="attachment-btn" onclick="attachFile()">📎</button>
+                <button class="icon-btn" onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+        <div class="update-container">
+            <form id="updateUserForm" class='form hidden'>
+                <input type="hidden" id="updateUserId">
+                <input type="text" id="updateName" placeholder="Name">
+                <input type="text" id="updateStatusMessage" placeholder="Status Message">
+                <input type="text" id="updateProfilePicLink" placeholder="Profile Picture Link">
+                <select id="updatePresence">
+                    <option value="1">Available</option>
+                    <option value="2">Busy</option>
+                    <option value="3">Idle</option>
+                    <option value="4">Not logged in</option>
+                </select>
+                <button type="button" class="btn" onclick="updateUser()">Update User</button>
+            </form>
+            <form id="addUserForm" class='form hidden'>
+                <input type="text" id="name" placeholder="Name">
+                <input type="text" id="statusMessage" placeholder="Status Message">
+                <input type="text" id="profilePicLink" placeholder="Profile Picture Link">
+                <select id="presence">
+                    <option value="1">Available</option>
+                    <option value="2">Busy</option>
+                    <option value="3">Idle</option>
+                    <option value="4">Not logged in</option>
+                </select>
+                <button type="button" class="btn" onclick="addUser()">Add User</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let status = {
+            1: "green",
+            2: "red",
+            3: "yellow",
+            4: "grey"
+        };
+
+        let users_json = [
+            { userId: 1, name: "Jon Snow", profilePicture: "https://images.unsplash.com/photo-1546525848-3ce03ca516f6", statusMessage: "We become what we think about!", presence: 1 },
+            { userId: 2, name: "Daenerys Targaryen", profilePicture: "https://preview.redd.it/hlxen8gtwpm01.jpg?width=640&crop=smart&auto=webp&v=enabled&s=a3c43bcbfc1db31d542ef67071559264358b3d2b", statusMessage: "A positive mindset brings positive things.", presence: 3 },
+            { userId: 3, name: "Tyrion Lannister", profilePicture: "https://mir-s3-cdn-cf.behance.net/project_modules/fs/6a3f5237411193.573f25019c8bf.jpg", statusMessage: "One small positive thought can change your whole day", presence: 3 },
+            { userId: 4, name: "Jaime Lannister", profilePicture: "https://images.nightcafe.studio/jobs/mWfF1s7OOVg5DMTYiNZ8/mWfF1s7OOVg5DMTYiNZ8--4--qccau.jpg?tr=w-1600,c-at_max", statusMessage: "I am a rockstar", presence: 1 },
+            { userId: 5, name: "Arya Stark", profilePicture: "https://64.media.tumblr.com/21de4501827aba1c6463ce2ae6a36780/tumblr_ps5le9xxRb1w9a5vgo1_1280.jpg", statusMessage: "I am using Gradious messenger", presence: 4 }
+        ];
+
+        let chatMessages = {};
+
+        function renderUsers() {
+            const root = document.getElementById('root');
+            root.innerHTML = '';
+            users_json.forEach(user => {
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user';
+                userDiv.onclick = () => openChatBox(user.userId); // Open chat box on click
+                userDiv.innerHTML = `
+                    <div class="img-container">
+                        <img src="${user.profilePicture}" class='user-image' style="border-color: ${status[user.presence]};" alt="user image" />
+                    </div>
+                    <div class="user-detail">
+                        <p class="user-name">${user.name}</p>
+                        <p class="user-message">${user.statusMessage}</p>
+                    </div>
+                    <div class='dropdown'>
+                        <a href="#" role="button" onclick="toggleDropdown(event, ${user.userId})"><i class="bi bi-three-dots-vertical"></i></a>
+                        <ul id="dropdown-${user.userId}" class="dropdown-menu">
+                            <li><button class="dropdown-item" onclick='deleteUser(${user.userId})'>Delete</button></li>
+                            <li><button class="dropdown-item" onclick='showUpdateForm(${user.userId})'>Update</button></li>
+                        </ul>
+                    </div>
+                `;
+                root.appendChild(userDiv);
+            });
+        }
+
+        function showUserForm() {
+            document.getElementById('addUserForm').classList.remove('hidden');
+        }
+
+        function addUser() {
+            const name = document.getElementById('name').value;
+            const statusMessage = document.getElementById('statusMessage').value;
+            const profilePicLink = document.getElementById('profilePicLink').value;
+            const presence = parseInt(document.getElementById('presence').value);
+
+            const newUser = {
+                userId: users_json.length + 1,
+                name: name,
+                profilePicture: profilePicLink,
+                statusMessage: statusMessage,
+                presence: presence
+            };
+
+            users_json.unshift(newUser);
+            renderUsers();
+            document.getElementById('addUserForm').reset();
+            document.getElementById('addUserForm').classList.add('hidden');
+        }
+
+        function deleteUser(userId) {
+            if (window.confirm("Are you sure you want to delete this user?")) {
+                users_json = users_json.filter(user => user.userId !== userId);
+                renderUsers();
+            }
+        }
+
+        function showUpdateForm(userId) {
+            const user = users_json.find(user => user.userId === userId);
+            if (user) {
+                document.getElementById('updateName').value = user.name;
+                document.getElementById('updateStatusMessage').value = user.statusMessage;
+                document.getElementById('updateProfilePicLink').value = user.profilePicture;
+                document.getElementById('updatePresence').value = user.presence;
+                document.getElementById('updateUserId').value = userId;
+
+                document.getElementById('updateUserForm').classList.remove('hidden');
+            }
+        }
+
+        function updateUser() {
+            const userId = parseInt(document.getElementById('updateUserId').value);
+            const name = document.getElementById('updateName').value;
+            const statusMessage = document.getElementById('updateStatusMessage').value;
+            const profilePicLink = document.getElementById('updateProfilePicLink').value;
+            const presence = parseInt(document.getElementById('updatePresence').value);
+
+            const userIndex = users_json.findIndex(user => user.userId === userId);
+            if (userIndex !== -1) {
+                users_json[userIndex] = {
+                    userId: userId,
+                    name: name,
+                    profilePicture: profilePicLink,
+                    statusMessage: statusMessage,
+                    presence: presence
+                };
+                renderUsers();
+                document.getElementById('updateUserForm').reset();
+                document.getElementById('updateUserForm').classList.add('hidden');
+            }
+        }
+
+        function toggleDropdown(event, userId) {
+            event.preventDefault();
+            const dropdown = document.getElementById(`dropdown-${userId}`);
+            dropdown.classList.toggle('show');
+        }
+
+        function openChatBox(userId) {
+            const user = users_json.find(user => user.userId === userId);
+            if (user) {
+                document.getElementById('chatUserName').innerText = user.name;
+                document.getElementById('chatBox').style.display = 'flex';
+                document.getElementById('chatContent').innerHTML = (chatMessages[userId] || []).map(msg => `<div class="message receiver">${msg}</div>`).join('');
+            }
+        }
+
+        function closeChatBox() {
+            document.getElementById('chatBox').style.display = 'none';
+        }
+
+        function sendMessage() {
+            const userId = users_json.find(user => user.name === document.getElementById('chatUserName').innerText).userId;
+            const message = document.getElementById('chatMessageInput').value;
+            if (message.trim()) {
+                if (!chatMessages[userId]) {
+                    chatMessages[userId] = [];
+                }
+                chatMessages[userId].push(message);
+                document.getElementById('chatContent').innerHTML += `<div class="message sender">${message}</div>`;
+                document.getElementById('chatMessageInput').value = '';
+                document.getElementById('chatContent').scrollTop = document.getElementById('chatContent').scrollHeight;
+                
+                setTimeout(() => autoReply(userId), 1000); 
+            }
+        }
+
+        function autoReply(userId) {
+            setTimeout(() => {
+                const user = users_json.find(user => user.userId === userId);
+                if (user) {
+                    const autoReplyMessage = `User: ${chatMessages[userId].slice(-1)[0]}`;
+                    if (!chatMessages[userId]) {
+                        chatMessages[userId] = [];
+                    }
+                    chatMessages[userId].push(autoReplyMessage);
+                    document.getElementById('chatContent').innerHTML += `<div class="message receiver">${autoReplyMessage}</div>`;
+                    document.getElementById('chatContent').scrollTop = document.getElementById('chatContent').scrollHeight;
+                }
+            }, 1000); 
+        }
+    
+        function attachFile() {
+            alert("Attachment feature not implemented yet.");
+        }
+
+        document.addEventListener('DOMContentLoaded', renderUsers);
+        document.getElementById('chatMessageInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
